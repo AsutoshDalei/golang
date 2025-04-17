@@ -1,17 +1,17 @@
 package main
 
-//https://www.youtube.com/watch?v=YzLrWHZa-Kc&ab_channel=DerekBanas
-/*
-Multiline
-Comment
-*/
-
 import (
 	"fmt"
+	"math"
 )
 
-var pl = fmt.Println
+const pi = 3.14
 
 func main() {
-	pl("Hello World")
+
+	fmt.Println(pi * 203)
+	fmt.Println(math.Sin(310212))
+
+	fmt.Println("Hello World" + " nice!")
+
 }
