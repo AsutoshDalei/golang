@@ -2,16 +2,37 @@ package main
 
 import (
 	"fmt"
-	"math"
 )
 
 const pi = 3.14
 
 func main() {
+	i := 5
+	fmt.Print("Write ", i, " as ")
+	switch i {
+	case 1:
+		fmt.Println("one")
+	case 2:
+		fmt.Println("two")
+	case 3:
+		fmt.Println("three")
+	default:
+		fmt.Println("beyond")
+	}
 
-	fmt.Println(pi * 203)
-	fmt.Println(math.Sin(310212))
+	whatAmI := func(i interface{}) {
+		switch t := i.(type) {
+		case bool:
+			fmt.Println("Bool")
+		case int:
+			fmt.Println("int")
+		default:
+			fmt.Println("idk", t)
+		}
+	}
 
-	fmt.Println("Hello World" + " nice!")
+	whatAmI(true)
+	whatAmI(1)
+	whatAmI("asxa")
 
 }
