@@ -7,32 +7,28 @@ import (
 const pi = 3.14
 
 func main() {
-	i := 5
-	fmt.Print("Write ", i, " as ")
-	switch i {
-	case 1:
-		fmt.Println("one")
-	case 2:
-		fmt.Println("two")
-	case 3:
-		fmt.Println("three")
-	default:
-		fmt.Println("beyond")
-	}
+	var s []string
+	fmt.Println("uninit:", s, s == nil, len(s) == 0)
 
-	whatAmI := func(i interface{}) {
-		switch t := i.(type) {
-		case bool:
-			fmt.Println("Bool")
-		case int:
-			fmt.Println("int")
-		default:
-			fmt.Println("idk", t)
-		}
-	}
+	s = make([]string, 3)
+	fmt.Println("emp:", s, s == nil, len(s) == 0, len(s))
 
-	whatAmI(true)
-	whatAmI(1)
-	whatAmI("asxa")
+	s[0] = "a"
+	s[1] = "b"
+	s[2] = "c"
+
+	fmt.Println("set: ", s)
+	fmt.Println("get: ", s[2], len(s))
+
+	s = append(s, "d")
+	s = append(s, "e", "f")
+	fmt.Println("apd: ", s)
+
+	c := make([]string, len(s))
+	copy(c, s)
+	fmt.Println("cpy: ", c)
+
+	t := []string{"g", "h", "i"}
+	fmt.Println("dcl: ", t)
 
 }
