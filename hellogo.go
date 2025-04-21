@@ -1,34 +1,31 @@
 package main
 
-import (
-	"fmt"
-)
-
-const pi = 3.14
+import "fmt"
 
 func main() {
-	var s []string
-	fmt.Println("uninit:", s, s == nil, len(s) == 0)
+	nums := []int{2, 3, 4}
+	sum := 0
+	for _, n := range nums {
+		sum += n
+	}
+	fmt.Println(sum)
 
-	s = make([]string, 3)
-	fmt.Println("emp:", s, s == nil, len(s) == 0, len(s))
+	for i, n := range nums {
+		if n == 3 {
+			fmt.Println(i)
+		}
+	}
 
-	s[0] = "a"
-	s[1] = "b"
-	s[2] = "c"
+	kvs := map[string]string{"a": "apple", "b": "ball"}
+	for k, v := range kvs {
+		fmt.Printf("%s -> %s\n", k, v)
+	}
+	for k := range kvs {
+		fmt.Printf("%s -> %s\n", k, "v")
+	}
 
-	fmt.Println("set: ", s)
-	fmt.Println("get: ", s[2], len(s))
-
-	s = append(s, "d")
-	s = append(s, "e", "f")
-	fmt.Println("apd: ", s)
-
-	c := make([]string, len(s))
-	copy(c, s)
-	fmt.Println("cpy: ", c)
-
-	t := []string{"g", "h", "i"}
-	fmt.Println("dcl: ", t)
+	for i, c := range "google" {
+		fmt.Println(i, c)
+	}
 
 }
