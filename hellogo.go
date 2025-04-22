@@ -2,30 +2,30 @@ package main
 
 import "fmt"
 
+type person struct {
+	name string
+	age  int
+}
+
+func newPerson(name string) *person {
+	p := person{name: name}
+	p.age = 42
+	return &p
+
+}
 func main() {
-	nums := []int{2, 3, 4}
-	sum := 0
-	for _, n := range nums {
-		sum += n
-	}
-	fmt.Println(sum)
+	fmt.Println(person{"bob", 20})
+	fmt.Println(person{age: 20})
 
-	for i, n := range nums {
-		if n == 3 {
-			fmt.Println(i)
-		}
-	}
+	fmt.Println(&person{name: "ann", age: 40})
 
-	kvs := map[string]string{"a": "apple", "b": "ball"}
-	for k, v := range kvs {
-		fmt.Printf("%s -> %s\n", k, v)
-	}
-	for k := range kvs {
-		fmt.Printf("%s -> %s\n", k, "v")
-	}
+	fmt.Println(newPerson("Jon"))
+	s := person{name: "Sean", age: 50}
+	fmt.Println(s.name)
 
-	for i, c := range "google" {
-		fmt.Println(i, c)
-	}
+	sp := &s
+	fmt.Println(sp.name)
 
+	sp.age = 51
+	fmt.Println(sp.age)
 }
