@@ -2,30 +2,38 @@ package main
 
 import "fmt"
 
-type person struct {
-	name string
-	age  int
+type base struct {
+	num int
 }
 
-func newPerson(name string) *person {
-	p := person{name: name}
-	p.age = 42
-	return &p
-
+func (b base) describe() string {
+	return fmt.Sprintf("base with num=%v", b.num)
 }
+
+type container struct {
+	base
+	str1 string
+}
+
 func main() {
-	fmt.Println(person{"bob", 20})
-	fmt.Println(person{age: 20})
+	co := container{
+		base: base{num: 1},
+		str1: "some name",
+	}
 
-	fmt.Println(&person{name: "ann", age: 40})
+	b := base{num: 2}
+	fmt.Printf("co={num: %v, str: %v}\n", co.num, co.str1)
 
-	fmt.Println(newPerson("Jon"))
-	s := person{name: "Sean", age: 50}
-	fmt.Println(s.name)
+	fmt.Println("also num: ", co.base.num)
 
-	sp := &s
-	fmt.Println(sp.name)
+	fmt.Println("Describe 1: ", co.describe())
+	fmt.Println("Describe 2: ", b.describe())
+	type describer interface {
+		describe() string
+	}
 
-	sp.age = 51
-	fmt.Println(sp.age)
+	var d describer = co
+
+	fmt.Println("Describe: ", d.describe())
+
 }
