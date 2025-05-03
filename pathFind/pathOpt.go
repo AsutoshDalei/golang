@@ -184,11 +184,11 @@ func dijkstra(graph *Graph, startID, targetID int) ([]int, float64) {
 }
 
 func main() {
-	nodes, err := loadNodes("./nodes.json")
+	nodes, err := loadNodes("./data/nodes.json")
 	if err != nil {
 		panic(err)
 	}
-	edges, err := loadEdges("./edges.json")
+	edges, err := loadEdges("./data/edges.json")
 	if err != nil {
 		panic(err)
 	}
@@ -205,6 +205,6 @@ func main() {
 
 	fmt.Println("Starting Scan")
 	_, cost := dijkstra(graph, startID, endID)
-	fmt.Printf("\nShortest path: %.2f)\n", cost)
+	fmt.Printf("\nShortest path: %.2f km\n", cost/1000)
 
 }
