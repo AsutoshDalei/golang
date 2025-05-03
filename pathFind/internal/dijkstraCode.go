@@ -1,27 +1,40 @@
+package dijkstraCode
+
+import (
+	"container/heap"
+	"math"
+)
+
 type Item struct {
 	NodeID   int
 	Priority float64
 	Index    int
 }
 
-type PriorityQueue []*Item
+type PriorityQ []*Item
 
-func (pq PriorityQueue) Len() int { return len(pq) }
-func (pq PriorityQueue) Less(i, j int) bool {
+func (pq PriorityQ) Len() int {
+	return len(pq)
+}
+
+func (pq PriorityQ) Less(i int, j int) bool {
 	return pq[i].Priority < pq[j].Priority
 }
-func (pq PriorityQueue) Swap(i, j int) {
+
+func (pq PriorityQ) Swap(i, j int) {
 	pq[i], pq[j] = pq[j], pq[i]
 	pq[i].Index = i
 	pq[j].Index = j
 }
-func (pq *PriorityQueue) Push(x any) {
+
+func (pq *PriorityQ) Push(x any) {
 	n := len(*pq)
 	item := x.(*Item)
 	item.Index = n
 	*pq = append(*pq, item)
 }
-func (pq *PriorityQueue) Pop() any {
+
+func (pq *PriorityQ) Pop() any {
 	old := *pq
 	n := len(old)
 	item := old[n-1]
@@ -29,8 +42,7 @@ func (pq *PriorityQueue) Pop() any {
 	return item
 }
 
-
-func dijkstra(graph *Graph, startID, goalID int) ([]int, float64) {
+func dijkstra(graph *Graph, startID, targetID int) ([]int, float64) {
 	dist := make(map[int]float64)
 	prev := make(map[int]int)
 	for id := range graph.Nodes {
@@ -38,18 +50,16 @@ func dijkstra(graph *Graph, startID, goalID int) ([]int, float64) {
 	}
 	dist[startID] = 0
 
-	pq := &PriorityQueue{}
+	pq := &PriorityQ{}
 	heap.Init(pq)
 	heap.Push(pq, &Item{NodeID: startID, Priority: 0})
 
 	for pq.Len() > 0 {
 		current := heap.Pop(pq).(*Item)
 		u := current.NodeID
-
-		if u == goalID {
+		if u == targetID {
 			break
 		}
-
 		for _, edge := range graph.Adjacency[u] {
 			alt := dist[u] + edge.Length
 			if alt < dist[edge.To] {
@@ -60,16 +70,11 @@ func dijkstra(graph *Graph, startID, goalID int) ([]int, float64) {
 		}
 	}
 
-	// Reconstruct path
 	path := []int{}
-	for u := goalID; u != startID; u = prev[u] {
+	for u := targetID; u != startID; u = prev[u] {
 		path = append([]int{u}, path...)
 	}
 	path = append([]int{startID}, path...)
 
-	return path, dist[goalID]
+	return path, dist[targetID]
 }
-
-
-	path, cost := dijkstra(graph, 1, 3)
-	fmt.Printf("\nShortest path from 1 to 3: %v (Cost: %.2f)\n", path, cost)

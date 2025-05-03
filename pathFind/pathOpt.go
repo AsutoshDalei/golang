@@ -87,6 +87,34 @@ func buildGraph(nodes []Node, edges []Edge) *Graph {
 	return g
 }
 
+func haversine(lat1, lon1, lat2, lon2 float64) float64 {
+	const R = 6371e3
+	p1 := lat1 * math.Pi / 180
+	p2 := lat2 * math.Pi / 180
+
+	delP := (lat2 - lat1) * math.Pi / 180
+	delL := (lon2 - lon2) * math.Pi / 180
+
+	a := math.Sin(delP/2)*math.Sin(delP/2) + math.Cos(p1)*math.Cos(p2)*math.Sin(delL/2)*math.Sin(delL/2)
+
+	c := 2 * math.Atan2(math.Sqrt(a), math.Sqrt(1-a))
+
+	return R * c
+}
+
+func findClosestNode(nodes map[int]*Node, lat, lon float64) int {
+	minDist := math.Inf(1)
+	closestID := -1
+	for id, node := range nodes {
+		d := haversine(lat, lon, node.Lat, node.Lon)
+		if d < minDist {
+			minDist = d
+			closestID = id
+		}
+	}
+	return closestID
+}
+
 type PriorityQ []*Item
 
 func (pq PriorityQ) Len() int {
@@ -156,11 +184,11 @@ func dijkstra(graph *Graph, startID, targetID int) ([]int, float64) {
 }
 
 func main() {
-	nodes, err := loadNodes("./nodes.json")
+	nodes, err := loadNodes("./data/nodes.json")
 	if err != nil {
 		panic(err)
 	}
-	edges, err := loadEdges("./edges.json")
+	edges, err := loadEdges("./data/edges.json")
 	if err != nil {
 		panic(err)
 	}
@@ -169,8 +197,19 @@ func main() {
 
 	fmt.Printf("Loaded %d nodes and %d edges\n", len(graph.Nodes), len(edges))
 
+	startLat, startLon := 40.7992437, -73.9628734
+	endLat, endLon := 40.858744, -73.930122
+
+	startID := findClosestNode(graph.Nodes, startLat, startLon)
+	endID := findClosestNode(graph.Nodes, endLat, endLon)
+
 	fmt.Println("Starting Scan")
+<<<<<<< HEAD
 	path, cost := dijkstra(graph, 42427797, 42428007)
 	fmt.Printf("\nShortest path from 1 to 3: %v (Cost: %.2f)\n", path, cost)
+=======
+	_, cost := dijkstra(graph, startID, endID)
+	fmt.Printf("\nShortest path: %.2f km\n", cost/1000)
+>>>>>>> 33b376df68e399f3c6712b89b4d41f03fd4103c6
 
 }
