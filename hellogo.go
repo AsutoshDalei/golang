@@ -1,39 +1,40 @@
 package main
 
-import "fmt"
+import (
+	"encoding/json"
+	"fmt"
+)
 
-type base struct {
-	num int
+type resp1 struct {
+	Page   int
+	Fruits []string
 }
 
-func (b base) describe() string {
-	return fmt.Sprintf("base with num=%v", b.num)
-}
-
-type container struct {
-	base
-	str1 string
+type resp2 struct {
+	Page   int
+	Fruits []string
 }
 
 func main() {
-	co := container{
-		base: base{num: 1},
-		str1: "some name",
+	bolB, _ := json.Marshal(true)
+	fmt.Println(string(bolB))
+
+	bolB, _ = json.Marshal("hello")
+	fmt.Println(string(bolB))
+
+	strB := []string{"apple", "pear", "mango"}
+	bolB, _ = json.Marshal(strB)
+	fmt.Println(string(bolB))
+
+	strC := map[string]int{"apple": 5, "mango": 10}
+	bolB, _ = json.Marshal(strC)
+	fmt.Println(string(bolB))
+
+	res1D := &resp1{
+		Page:   1,
+		Fruits: []string{"apple", "pear", "banana"},
 	}
-
-	b := base{num: 2}
-	fmt.Printf("co={num: %v, str: %v}\n", co.num, co.str1)
-
-	fmt.Println("also num: ", co.base.num)
-
-	fmt.Println("Describe 1: ", co.describe())
-	fmt.Println("Describe 2: ", b.describe())
-	type describer interface {
-		describe() string
-	}
-
-	var d describer = co
-
-	fmt.Println("Describe: ", d.describe())
+	res1b, _ := json.Marshal(res1D)
+	fmt.Println(string(res1b))
 
 }
