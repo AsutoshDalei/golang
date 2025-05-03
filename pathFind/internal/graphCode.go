@@ -1,4 +1,4 @@
-package graphCode
+package internal
 
 import (
 	"encoding/json"
@@ -24,7 +24,7 @@ type Graph struct {
 	Adjacency map[int][]Edge
 }
 
-func loadNodes(filename string) ([]Node, error) {
+func LoadNodes(filename string) ([]Node, error) {
 	file, err := os.Open(filename)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read file: %w", err)
@@ -43,7 +43,7 @@ func loadNodes(filename string) ([]Node, error) {
 	return nodes, err
 }
 
-func loadEdges(filename string) ([]Edge, error) {
+func LoadEdges(filename string) ([]Edge, error) {
 	file, err := os.Open(filename)
 
 	if err != nil {
@@ -62,7 +62,7 @@ func loadEdges(filename string) ([]Edge, error) {
 	return edges, err
 }
 
-func buildGraph(nodes []Node, edges []Edge) *Graph {
+func BuildGraph(nodes []Node, edges []Edge) *Graph {
 	g := &Graph{
 		Nodes:     make(map[int]*Node),
 		Adjacency: make(map[int][]Edge),

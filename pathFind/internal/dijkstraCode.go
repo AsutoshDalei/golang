@@ -1,9 +1,37 @@
-package dijkstraCode
+package internal
 
 import (
 	"container/heap"
 	"math"
 )
+
+func Haversine(lat1, lon1, lat2, lon2 float64) float64 {
+	const R = 6371e3
+	p1 := lat1 * math.Pi / 180
+	p2 := lat2 * math.Pi / 180
+
+	delP := (lat2 - lat1) * math.Pi / 180
+	delL := (lon2 - lon2) * math.Pi / 180
+
+	a := math.Sin(delP/2)*math.Sin(delP/2) + math.Cos(p1)*math.Cos(p2)*math.Sin(delL/2)*math.Sin(delL/2)
+
+	c := 2 * math.Atan2(math.Sqrt(a), math.Sqrt(1-a))
+
+	return R * c
+}
+
+func FindClosestNode(nodes map[int]*Node, lat, lon float64) int {
+	minDist := math.Inf(1)
+	closestID := -1
+	for id, node := range nodes {
+		d := Haversine(lat, lon, node.Lat, node.Lon)
+		if d < minDist {
+			minDist = d
+			closestID = id
+		}
+	}
+	return closestID
+}
 
 type Item struct {
 	NodeID   int
@@ -42,7 +70,7 @@ func (pq *PriorityQ) Pop() any {
 	return item
 }
 
-func dijkstra(graph *Graph, startID, targetID int) ([]int, float64) {
+func Dijkstra(graph *Graph, startID, targetID int) ([]int, float64) {
 	dist := make(map[int]float64)
 	prev := make(map[int]int)
 	for id := range graph.Nodes {
