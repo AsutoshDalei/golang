@@ -170,7 +170,7 @@ func main() {
 	fmt.Printf("Loaded %d nodes and %d edges\n", len(graph.Nodes), len(edges))
 
 	fmt.Println("Starting Scan")
-	path, cost := dijkstra(graph, 1, 3)
+	path, cost := dijkstra(graph, 42427797, 42428007)
 	fmt.Printf("\nShortest path from 1 to 3: %v (Cost: %.2f)\n", path, cost)
 
 }
