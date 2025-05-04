@@ -8,11 +8,16 @@ import (
 	"net/http"
 )
 
-type Coordinates struct {
+type InputCoordinates struct {
 	Lat1 float64 `json:"lat1"`
 	Lon1 float64 `json:"lon1"`
 	Lat2 float64 `json:"lat2"`
 	Lon2 float64 `json:"lon2"`
+}
+
+type Coordinates struct {
+	Lat float64 `json:"lat"`
+	Lon float64 `json:"lon"`
 }
 
 type Response struct {
@@ -20,12 +25,17 @@ type Response struct {
 	Cost float64 `json:"Cost"`
 }
 
+type ResponseV2 struct {
+	Path []Coordinates `json:"Path"`
+	Cost float64       `json:"Cost"`
+}
+
 func RouteHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	var coords Coordinates
+	var coords InputCoordinates
 	err := json.NewDecoder(r.Body).Decode(&coords)
 	if err != nil {
 		http.Error(w, "Invalid JSON body", http.StatusBadRequest)
@@ -37,8 +47,17 @@ func RouteHandler(w http.ResponseWriter, r *http.Request) {
 
 	path, cost := internal.Dijkstra(graph, startID, endID)
 
-	resp := Response{Path: path, Cost: cost}
-	json.NewEncoder(w).Encode(resp)
+	var pathCoords []Coordinates
+	for _, nodeID := range path {
+		node_ := graph.Nodes[nodeID]
+		pathCoords = append(pathCoords, Coordinates{Lat: node_.Lat, Lon: node_.Lon})
+	}
+
+	// resp := Response{Path: path, Cost: cost}
+	respV2 := ResponseV2{Path: pathCoords, Cost: cost}
+
+	// json.NewEncoder(w).Encode(resp)
+	json.NewEncoder(w).Encode(respV2)
 }
 
 var graph *internal.Graph
@@ -68,7 +87,7 @@ func main() {
 	// fmt.Printf("\nShortest path: %.2f km\n", cost/1000)
 
 	http.HandleFunc("/route", RouteHandler)
+	http.Handle("/", http.FileServer(http.Dir("./static")))
 	log.Println("Server listening on :8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
-
 }

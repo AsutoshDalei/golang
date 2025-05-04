@@ -1,0 +1,96 @@
+<!doctype html>
+<html>
+    <head>
+        <title>NYC Route Finder</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <!-- Leaflet CSS -->
+        <link
+            rel="stylesheet"
+            href="https://unpkg.com/leaflet/dist/leaflet.css"
+        />
+        <style>
+            #map {
+                height: 600px;
+            }
+            .form {
+                margin-bottom: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <h3>NYC Route Finder</h3>
+
+        <div class="form">
+            <label>Start (lat, lon):</label>
+            <input type="text" id="startLat" placeholder="e.g., 40.7992" />
+            <input type="text" id="startLon" placeholder="e.g., -73.9628" />
+            <br />
+            <label>End (lat, lon):</label>
+            <input type="text" id="endLat" placeholder="e.g., 40.8587" />
+            <input type="text" id="endLon" placeholder="e.g., -73.9301" />
+            <br />
+            <button onclick="getRoute()">Find Route</button>
+        </div>
+
+        <div id="map"></div>
+
+        <!-- Leaflet JS -->
+        <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+        <script>
+            const map = L.map("map").setView([40.8, -73.95], 12); // NYC view
+
+            // Add OpenStreetMap tiles
+            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                attribution: "© OpenStreetMap contributors",
+            }).addTo(map);
+
+            let routeLayer;
+
+            async function getRoute() {
+                const lat1 = parseFloat(
+                    document.getElementById("startLat").value,
+                );
+                const lon1 = parseFloat(
+                    document.getElementById("startLon").value,
+                );
+                const lat2 = parseFloat(
+                    document.getElementById("endLat").value,
+                );
+                const lon2 = parseFloat(
+                    document.getElementById("endLon").value,
+                );
+
+                const response = await fetch("http://localhost:8080/route", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ lat1, lon1, lat2, lon2 }),
+                });
+
+                if (!response.ok) {
+                    alert("Error fetching route");
+                    return;
+                }
+
+                const data = await response.json();
+
+                const latlngs = data.Path.map((p) => [p.lat, p.lon]);
+
+                if (routeLayer) {
+                    map.removeLayer(routeLayer);
+                }
+
+                routeLayer = L.polyline(latlngs, { color: "blue" }).addTo(map);
+                startMarker = L.marker(latlngs[0])
+                    .addTo(map)
+                    .bindPopup("Start")
+                    .openPopup();
+                endMarker = L.marker(latlngs[latlngs.length - 1])
+                    .addTo(map)
+                    .bindPopup("End");
+                map.fitBounds(routeLayer.getBounds());
+            }
+        </script>
+    </body>
+</html>
