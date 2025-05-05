@@ -55,7 +55,7 @@ func RouteHandler(w http.ResponseWriter, r *http.Request) {
 
 	// resp := Response{Path: path, Cost: cost}
 	respV2 := ResponseV2{Path: pathCoords, Cost: cost}
-
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	// json.NewEncoder(w).Encode(resp)
 	json.NewEncoder(w).Encode(respV2)
 }

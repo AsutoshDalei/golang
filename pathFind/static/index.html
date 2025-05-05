@@ -62,7 +62,7 @@
                     document.getElementById("endLon").value,
                 );
 
-                const response = await fetch("http://localhost:8080/route", {
+                const response = await fetch("/route", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ lat1, lon1, lat2, lon2 }),
