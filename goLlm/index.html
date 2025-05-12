@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>RAG Application</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      max-width: 800px;
+      margin: auto;
+    }
+
+    textarea, input[type="text"] {
+      width: 100%;
+      padding: 0.75rem;
+      margin-top: 1rem;
+      font-size: 1rem;
+    }
+
+    button {
+      padding: 0.75rem 1.5rem;
+      margin-top: 1rem;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .response {
+      margin-top: 2rem;
+      background-color: #f0f0f0;
+      padding: 1rem;
+      border-radius: 5px;
+    }
+
+    .docs {
+      margin-top: 1rem;
+      color: #555;
+    }
+
+    .doc-snippet {
+      margin-top: 0.5rem;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <h1>RAG Query Interface</h1>
+  <label for="query">Enter your query:</label>
+  <input type="text" id="query" placeholder="Ask me something..." />
+
+  <button onclick="submitQuery()">Submit</button>
+
+  <div class="response" id="response" style="display:none;">
+    <h2>Answer:</h2>
+    <p id="answer"></p>
+
+    <div class="docs">
+      <h3>Source Documents:</h3>
+      <div id="documents"></div>
+    </div>
+  </div>
+
+  <script>
+    async function submitQuery() {
+      const query = document.getElementById('query').value;
+      if (!query) {
+        alert('Please enter a query.');
+        return;
+      }
+
+      const responseDiv = document.getElementById('response');
+      const answerDiv = document.getElementById('answer');
+      const docsDiv = document.getElementById('documents');
+
+      answerDiv.innerText = "Loading...";
+      docsDiv.innerHTML = "";
+      responseDiv.style.display = "block";
+
+      try {
+        const res = await fetch('/query', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query })
+        });
+
+        const data = await res.json();
+        answerDiv.innerText = data.answer || "No answer received.";
+
+        if (data.documents && Array.isArray(data.documents)) {
+          data.documents.forEach(doc => {
+            const p = document.createElement('p');
+            p.className = 'doc-snippet';
+            p.innerText = doc;
+            docsDiv.appendChild(p);
+          });
+        }
+      } catch (error) {
+        answerDiv.innerText = "Error fetching response.";
+        console.error("Error:", error);
+      }
+    }
+  </script>
+</body>
+</html>

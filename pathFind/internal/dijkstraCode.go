@@ -11,7 +11,7 @@ func Haversine(lat1, lon1, lat2, lon2 float64) float64 {
 	p2 := lat2 * math.Pi / 180
 
 	delP := (lat2 - lat1) * math.Pi / 180
-	delL := (lon2 - lon2) * math.Pi / 180
+	delL := (lon2 - lon1) * math.Pi / 180
 
 	a := math.Sin(delP/2)*math.Sin(delP/2) + math.Cos(p1)*math.Cos(p2)*math.Sin(delL/2)*math.Sin(delL/2)
 
