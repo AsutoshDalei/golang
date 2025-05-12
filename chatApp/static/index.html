@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Go Chat</title>
+    </head>
+    <body>
+        <h2>Go Chat App</h2>
+
+        <label>User ID: <input type="text" id="userId" /></label><br />
+        <label
+            >Receiver ID (or "all"): <input type="text" id="receiver" /></label
+        ><br />
+        <button onclick="connect()">Connect</button>
+
+        <div
+            id="chat"
+            style="
+                margin-top: 20px;
+                border: 1px solid #ccc;
+                padding: 10px;
+                width: 400px;
+                height: 200px;
+                overflow: auto;
+            "
+        ></div>
+        <input
+            type="text"
+            id="message"
+            placeholder="Enter message"
+            style="width: 300px"
+        />
+        <button onclick="sendMessage()">Send</button>
+
+        <script>
+            let socket;
+            let userId;
+
+            function connect() {
+                userId = document.getElementById("userId").value.trim();
+                if (!userId) {
+                    alert("Enter user ID");
+                    return;
+                }
+
+                // Replace with your Go server IP
+                const serverIP = "192.168.1.231"; // change this to your server's IP on LAN
+                socket = new WebSocket(`ws://${serverIP}:8080/ws?id=${userId}`);
+
+                socket.onopen = () => {
+                    logMessage("Connected as " + userId);
+                };
+
+                socket.onmessage = (event) => {
+                    const msg = JSON.parse(event.data);
+                    console.log("Received:", msg); // for debugging
+                    logMessage(
+                        `[${msg.sender} -> ${msg.receiver}]: ${msg.content}`,
+                    );
+                };
+
+                socket.onclose = () => {
+                    logMessage("Disconnected");
+                };
+            }
+
+            function sendMessage() {
+                const receiver =
+                    document.getElementById("receiver").value.trim() || "all";
+                const content = document.getElementById("message").value.trim();
+                if (!content) return;
+
+                const message = {
+                    sender: userId,
+                    receiver: receiver,
+                    content: content,
+                };
+
+                console.log("Sending:", message); // for debugging
+                socket.send(JSON.stringify(message));
+                document.getElementById("message").value = "";
+            }
+
+            function logMessage(msg) {
+                const div = document.getElementById("chat");
+                div.innerHTML += msg + "<br/>";
+                div.scrollTop = div.scrollHeight;
+            }
+        </script>
+    </body>
+</html>
